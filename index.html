@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<title>
+	Aquarium
+</title>
+<style type="text/css">
+*{
+	box-sizing:     border-box;
+	font-size:      12pt;
+}
+
+body{
+	background:          rgb(2,0,36);
+	background:          linear-gradient(180deg, rgb(7, 168, 201) 0%, rgb(9, 114, 121) 25%, rgb(0, 36, 35) 90%);
+	width:               100vw;
+	height:              100vw;
+	overflow-x:          hidden;
+	overflow-y:          hidden;
+	font-family:         Tahoma, sans-serif;
+}
+
+.container{
+	width:               50vw;
+	margin:              0 auto;
+	padding:             0 20px 10px 20px;
+	border:              3px solid white;
+	border-radius:       15px;
+	box-shadow:          5px 5px 5px black;
+	background:          whitesmoke;
+}
+
+.container header{
+/*	width:               100%;*/
+/*	margin:              0 10px;*/
+	border-bottom:       2px solid rgba(0,212,255,1);
+	border-bottom:       2px solid linear-gradient(0deg, rgba(9,9,121,1) 0%, rgba(0,212,255,1) 50%, rgba(9,9,121,1) 0%);
+}
+.container main{
+	margin:              10px 0;
+}
+.container footer{
+/*	margin:              0 10px;*/
+	padding-top:         10px;
+	border-top:          2px solid rgba(0,212,255,1);
+}
+
+.title{
+	font-weight:         bold;
+	font-size:           x-large;
+	text-align:          center;
+	padding-bottom:      0;
+	margin-bottom:       0;
+}
+
+button{
+	min-width:           4em;
+	padding:             0.25em;
+	background:          white;
+	border-radius:       5px;
+	box-shadow:          2px 2px 2px black;
+/*	transition-duration: 0.1s;*/
+
+}
+
+button:hover{
+	color:               white;
+}
+
+button:active{
+	box-shadow:          0px 0px 0px black;
+	transform:           translateY(2px)
+}
+
+.btnCalc{
+	display:             block;
+	margin-right:        0;
+	margin-left:         0;
+	padding:             0.5em;
+	font-size:         	 medium;
+	border:              2px solid #008CBA;
+}
+.btnCalc:hover{
+	background:          #008CBA;
+}
+
+.btnOn{
+	position: 			absolute;
+	left: 				40%;
+	font-size:         	medium;
+	border:             2px solid #00BA8C;
+}
+.btnOn:hover{
+	background:          #00BA8C;
+}
+
+.btnOff{
+	position: 			absolute;
+	left: 				45%;
+	font-size:         	medium;
+	border:             2px solid #BA008C;
+}
+.btnOff:hover{
+	background:          #BA008C;
+}
+
+</style>
+</head>
+<body>
+	<article class="container">
+		<header>
+			<h1 class="title">Aquarium</h1>
+		</header>
+		<main>
+			<p>
+				Leds  <span id="led"><!--led--></span>.
+				<button class="btnOn" onclick="updateLed(1);">On</button>
+				<button class="btnOff" onclick="updateLed(0);">Off</button>
+			</p>
+			<p>
+				Filter <span id="filt"><!--filt--></span>.
+				<button class="btnOn" onclick="updateFilt(1);">On</button>
+				<button class="btnOff" onclick="updateFilt(0);">Off</button>
+			</p>
+			<p>
+				Output pump <span id="outP"><!--outP--></span>.
+				<button class="btnOn" onclick="updateOP(1);">On</button>
+				<button class="btnOff" onclick="updateOP(0);">Off</button>
+			</p>
+			<p> 
+				Lamp.
+				<button class="btnOn" onclick="updateLamp(1);">Up</button>
+				<button class="btnOff" onclick="updateLamp(0);">Down</button>
+			</p>
+			<p>
+				<p>Brightness at <input id="duty" type="text" placeholder="[0 - 100]" size= "6" maxlength="3" pattern="{0-9}"> %.</p>
+				<button class="btnCalc"onclick="brightness();">Modify Brightness</button>
+			</p>
+			<p>
+				<p>NeoPixel hue at <input id="h" type="text" placeholder="[0 - 360)" size= "6" maxlength="3" pattern="{0-9}">.</p>
+				<button class="btnCalc"onclick="Mcolor();">Modify color</button>
+			</p>
+		</main>
+		<footer>
+			<p>Temperature: <span id="rp2040temp"><!--temp--></span>°C</p>
+			<p><span id="lvl"><!--lvl--></span>.</p>
+			<p id="result"></p>
+			<p>Heater <span id="heat"><!--heat--></span>.</p>
+			<p>Input pump  <span id="inP"><!--inP--></span>. </p>
+			<p>Fan <span id="fan"><!--fan--></span>. </p>
+		</footer>
+	</article>
+</body>
+</html>
+
+<script language="javascript">
+	
+function brightness(on){
+	var valor = document.getElementById('duty')
+	let aux = parseInt(valor.value,10)
+	let req = new XMLHttpRequest();
+	req.open('GET', 'brightness?on=' + aux);
+	req.onload = function() {
+	if (req.status == 200)
+		document.getElementById("result").innerHTML = "Brightness defined at " + valor.value + "%."
+	else
+		console.log("Error: " + req.status);
+	}
+	req.send();
+}
+
+function Mcolor(on){
+	var val = document.getElementById('h')
+	let au = parseInt(val.value,10)
+	let req = new XMLHttpRequest();
+	req.open('GET', 'color?on=' + au);
+	req.onload = function() {
+	if (req.status != 200)
+		console.log("Error: " + req.status);
+	}
+	req.send();
+}
+
+function updateLed(on){
+	let req = new XMLHttpRequest();
+	req.open('GET', 'led?on=' + on);
+	req.onload = function() {
+	if (req.status == 200)
+			document.getElementById("led").innerHTML = req.responseText;
+		else
+			console.log("Error: " + req.status);
+	}
+	req.send();
+}
+
+function updateLamp(on){
+	let req = new XMLHttpRequest();
+	req.open('GET', 'lamp?on=' + on);
+	req.onload = function() {
+	if (req.status != 200)
+			console.log("Error: " + req.status);
+	}
+	req.send();
+}
+
+function updateFilt(on){
+	let req = new XMLHttpRequest();
+	req.open('GET', 'filt?on=' + on);
+	req.onload = function() {
+	if (req.status == 200)
+			document.getElementById("filt").innerHTML = req.responseText;
+		else
+			console.log("Error: " + req.status);
+	}
+	req.send();
+}
+
+function updateFan(){
+	let req = new XMLHttpRequest();
+	req.open('GET', "fan");
+	req.onload = function() {
+		if (req.status == 200)
+			document.getElementById("fan").innerHTML = req.responseText;
+		else
+			console.log("Error: " + req.status);
+	}
+	req.send();
+}
+
+function updateOP(on){
+	let req = new XMLHttpRequest();
+	req.open('GET', 'outP?on=' + on);
+	req.onload = function() {
+	if (req.status == 200)
+			document.getElementById("outP").innerHTML = req.responseText;
+		else
+			console.log("Error: " + req.status);
+	}
+	req.send();
+}
+
+function updateTemperature(){
+	let req = new XMLHttpRequest();
+	req.open('GET', "temp");
+	req.onload = function() {
+		if (req.status == 200)
+			document.getElementById("rp2040temp").innerHTML = req.responseText;
+		else
+			console.log("Error: " + req.status);
+	}
+	req.send();
+}
+
+function updatelvl(){
+	let req = new XMLHttpRequest();
+	req.open('GET', "lvl");
+	req.onload = function() {
+		if (req.status == 200)
+			document.getElementById("lvl").innerHTML = req.responseText;
+		else
+			console.log("Error: " + req.status);
+	}
+	req.send();
+}
+
+function updateHeat(){
+	let req = new XMLHttpRequest();
+	req.open('GET', "heat");
+	req.onload = function() {
+		if (req.status == 200)
+			document.getElementById("heat").innerHTML = req.responseText;
+		else
+			console.log("Error: " + req.status);
+	}
+	req.send();
+}
+
+function updateIP(on){
+	let req = new XMLHttpRequest();
+	req.open('GET', "inP");
+	req.onload = function() {
+		if (req.status == 200)
+			document.getElementById("inP").innerHTML = req.responseText;
+		else
+			console.log("Error: " + req.status);
+	}
+	req.send();
+}
+
+window.onload = (event) => {
+    window.setInterval(updateTemperature, 1000);
+	window.setInterval(updatelvl,1100);
+	window.setInterval(updateIP,1200);
+	window.setInterval(updateHeat,1300);
+	window.setInterval(updateFan,1400);
+}
+
+</script>
+
+
