@@ -1,14 +1,14 @@
-# MultiCore-Project
-In this repository I share my part of a full project in which we automate an aquarium.
+# Project Overview
 
-Here I include:
+In this school project, I collaborated in the design of an automated aquarium. The key features I developed include:
+* A water level control system to maintain a consistent water level inside the tank.
+* A temperature control system to keep the water temperature within a specified range.
+* A web interface that allows users to control and modify the state of various actuators
+* The ability to change the color and brightness of an array of lights.
+* The ability to drain the aquarium when necessary.
+* The option to activate a filter for water purification.
 
-  1.- Temperature control design using a waterproof sensor which activates an AC heater or a DC fan depending on the detected temperature.
-  
-  2.- Water level control design using a level sensor that activates two pumps: one to fill the aquarium and another to empty it.
-  
-  3.- Manual activation of the filter, LEDs, and pumps via a web page.
-  
-  4.- Manual control of the LED's brightness, color and position via a web page.
-  
-  5.-A web page that displays all parameters for control.
+## Tasks Handled by the RP2040
+It retrieves requests from UART. Some actions it realices
+
+## Tasks Handled by the ESP32
